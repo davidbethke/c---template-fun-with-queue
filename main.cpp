@@ -20,11 +20,13 @@ class queue{
 public:
     queue(string n="",T *f=NULL, T*l=NULL):qName(n),first(f),last(l){}
     void enqueue(string);
+    void enqueue(T*);
     void dequeue();
     void showqueue();
     void insert(string, int);
     bool insertAfter(string,string);
     T* getItem(string);
+    string getQName();
 };
 struct node{
     string name;
@@ -49,7 +51,7 @@ public:
     Student *next;
     queue<Course> *courses;
     Student(string n="", string i="", queue<Course> *c=new queue<Course>("CourseList"), Student *p=NULL):name(n),id(i),courses(c),next(p){}
-    void setCourse(Course *);
+    void setCourse(Course );
     
 };
 
@@ -60,6 +62,10 @@ int main(int argc, char** argv) {
     s1.enqueue("Student1");
     
     s1.enqueue("Student2");
+    s1.enqueue("Student3");
+    s1.enqueue("Student4");
+    s1.enqueue(new Student("Student5","005",new queue<Course>("CourseList5")));
+    
     s1.showqueue();
     Student *temp;
     temp=s1.getItem("Student1");
@@ -75,7 +81,30 @@ int main(int argc, char** argv) {
     cout <<temp->id<<endl;
     cout <<temp->courses->getItem("Course1")->name<<endl;
     cout <<temp->courses->getItem("Course1")->description<<endl;
-
+    
+    temp=s1.getItem("Student2");
+    if(temp){
+        temp->id="002";
+       
+        temp->courses->enqueue("Course2");
+        temp->courses->getItem("Course2")->description="Im a Course2";
+    }
+    else
+        cout << "Student2 not found"<<endl;
+    cout <<"id"<<endl;
+    cout <<temp->id<<endl;
+    cout <<temp->courses->getItem("Course2")->name<<endl;
+    cout <<temp->courses->getItem("Course2")->description<<endl;
+    
+    temp=s1.getItem("Student5");
+    cout <<"id05"<<endl;
+    cout <<temp->id<<endl;
+    cout <<temp->courses->getQName()<<endl;
+    temp->courses->enqueue(new Course("Course5","im a Course5"));
+    //temp->courses->getItem("Course5")->description="Im Course5";
+    cout <<temp->courses->getItem("Course5")->description<<endl;
+    
+    
     /*
     q1.enqueue("Dave");
     q2.enqueue("Kitty");
@@ -113,6 +142,12 @@ void queue<T>::enqueue(string name){
     else last->next=temp;
     last=temp;
        
+}
+template<class T>
+void queue<T>::enqueue(T *t){
+    if(first==NULL)first=t;
+    else last->next=t;
+    last=t;
 }
 template<class T>
 void queue<T>::dequeue(){
@@ -166,8 +201,16 @@ T* queue<T>::getItem(string n){
     T *temp=first;
     while(temp != NULL){
         if(temp->name == n)
-            return temp;    
+            return temp; 
+        temp=temp->next;
     }
     return temp2;
+}
+void Student::setCourse(Course c){
+    courses->enqueue(c.name);
+}
+template<class T>
+string queue<T>::getQName(){
+    return qName;
 }
 
